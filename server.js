@@ -15,12 +15,16 @@ const path = require('path'); // works with file paths
 // get database, explicitly do I need this? 
 app.get('/api/db', (req, res) => {
   res.json(notes);
-})
+});
+
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/notes.html'));
+});
 
 // get the homepage for the server to display INDEX.HTML
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, './public/index.html'));
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
