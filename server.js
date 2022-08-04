@@ -5,15 +5,20 @@ const PORT = process.env.PORT || 3001;
 const app = express(); // instantiate express
 const fs = require('fs'); // write file
 const path = require('path'); // works with file paths
-// api route?
-// html route?
+
+// ADD APP.USE middleware functions here 
+app.use(express.static('public'));
 
 
-// ADD APP.USE middleware functions here??? 
+app.post('/api/notes', (req, res) => {
+  // POST /api/notes - ADDS to the db.json, RETURN new note
+  // give each note a unique id when saved 
+  // fs read file
+  
+})
 
-
-// get database, explicitly do I need this? 
-app.get('/api/db', (req, res) => {
+// GET /api/notes - should READ db.json AND RETURN all saved notes
+app.get('/api/notes', (req, res) => {
   res.json(notes);
 });
 
