@@ -5,7 +5,7 @@
       "text": "Test text"
     },
     {
-        "secondTitle": "Tester Title 2",
+        "title": "Tester Title 2",
         "text": "tester text 2",
         "id": 1234
     }

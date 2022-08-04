@@ -6,15 +6,18 @@ const app = express(); // instantiate express
 const fs = require('fs'); // write file
 const path = require('path'); // works with file paths
 
-// ADD APP.USE middleware functions here 
+// ---APP.USE middleware functions here ---
 app.use(express.static('public'));
-
+// url encoded takes incoming POST data and converts to key/value pairings
+// extended: true lets express know there may be subarrays w/in the data so it looks deeper into the POST data
+app.use(express.urlencoded({ extended: true })); 
+// express.json takes incoming POST data and parses into req.body JS obj
+app.use(express.json()); 
 
 app.post('/api/notes', (req, res) => {
   // POST /api/notes - ADDS to the db.json, RETURN new note
   // give each note a unique id when saved 
   // fs read file
-  
 })
 
 // GET /api/notes - should READ db.json AND RETURN all saved notes
@@ -23,6 +26,7 @@ app.get('/api/notes', (req, res) => {
 });
 
 app.get('/notes', (req, res) => {
+  // __dirname is a variable that always returns the directory that the server is running in
   res.sendFile(path.join(__dirname, './public/notes.html'));
 });
 
