@@ -1,9 +1,10 @@
 const express = require('express');
-const { notes } = require('./db/db.json'); // require JSON file
+const notes = require('./db/db.json'); // require JSON file
 
 const PORT = process.env.PORT || 3001;
 const path = require('path'); // works with file paths
 const fs = require('fs'); // write file
+const { v4: uuidv4 } = require('uuid'); // npm for unique id
 const app = express(); // instantiate express
 
 // ---APP.USE middleware functions here ---
@@ -15,9 +16,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
 
 
-const addNewNote = (body, notesArr) => {
-  console.log(body, "body in NEW NOTE FUNC");
-  console.log(notesArr, "DB / notes array");
+const addNewNote = newNote => {
+  console.log(newNote, "body crossed over to NEW NOTE FUNC");
+
+  fs.readFile('./db/db.json', 'utf8', (err, data) => {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      console.log(data, 'this is the data from FS READDD');
+      const parsedNotesArr = JSON.parse(data);
+      parsedNotesArr.push(newNote);
+
+      console.log(parsedNotesArr, "NEW NOTE ADDED")
+    }
+  })
+  
 }
 
 
@@ -40,19 +54,16 @@ app.get('*', (req, res) => {
 // POST /api/notes - ADDS to the db.json, RETURN new note
 app.post('/api/notes', (req, res) => {
   const { title, text } = req.body;
-  console.log({ title }, "logged destructured title in POST method");
   
   const newNote = {
     title,
     text,
     // give each note a unique id when saved
-    // testing ID 
-    id: "123456789"
+    id: uuidv4()
   }
   
-  const returnedNote = addNewNote(newNote, notes);
-  
-  // fs read file somewhere here??
+  // send to new note function to read and add to db.json file
+  const returnedNote = addNewNote(newNote);
   res.json(returnedNote);
 })
 
