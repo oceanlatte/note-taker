@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3001;
 const path = require('path'); // works with file paths
 const fs = require('fs'); // write file
 const { v4: uuidv4 } = require('uuid'); // npm for unique id
+const e = require('express');
 const app = express(); // instantiate express
 
 // ---APP.USE middleware functions here ---
@@ -19,20 +20,26 @@ app.use(express.json());
 const addNewNote = newNote => {
   console.log(newNote, "body crossed over to NEW NOTE FUNC");
 
+  // read db.json to get all data already saved
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {
       console.log(err);
     }
     else {
-      console.log(data, 'this is the data from FS READDD');
       const parsedNotesArr = JSON.parse(data);
+
+      // push the newNote to the parsed read data
       parsedNotesArr.push(newNote);
 
-      console.log(parsedNotesArr, "NEW NOTE ADDED")
+      // then write the updated parsedNotesArr to db.json
+      fs.writeFileSync(
+        path.join(__dirname, './db/db.json'),
+        JSON.stringify(parsedNotesArr, null, 2)
+      );
+      return parsedNotesArr;
     }
-  })
-  
-}
+  });
+};
 
 
 // GET /api/notes - should READ db.json AND RETURN all saved notes

@@ -4,9 +4,8 @@
     "text": "Test text"
   },
   {
-      "title": "Tester Title 2",
-      "text": "tester text 2",
-      "id": 1234
+    "title": "Tester Title 2",
+    "text": "tester text 2",
+    "id": 1234
   }
-
 ]
