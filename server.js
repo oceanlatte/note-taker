@@ -16,16 +16,30 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
 
 
-const addNewNote = newNote => {
-  // read db.json to get all data already saved
+// POST /api/notes - ADDS to the db.json, RETURN new note
+app.post('/api/notes', (req, res) => {
+  const { title, text } = req.body;
+  
+  const newNote = {
+    title,
+    text,
+    // give each note a unique id when saved
+    id: uuidv4()
+  }
+
+  // add to current copy of notes
+  notes.push(newNote);
+  
+  // read and add to db.json file
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {
       console.log(err);
+      return res.sendStatus(500);
     }
     else {
       const parsedNotesArr = JSON.parse(data);
 
-      // push the newNote to the parsed read data
+      // push the newNote to the parsed read data in order to add newNote to the write to db
       parsedNotesArr.push(newNote);
 
       // then write the updated parsedNotesArr to db.json
@@ -33,11 +47,10 @@ const addNewNote = newNote => {
         path.join(__dirname, './db/db.json'),
         JSON.stringify(parsedNotesArr, null, 2)
       )
-      return;
     }
   });
-};
-
+  res.json(notes);
+});
 
 // GET /api/notes - should READ db.json AND RETURN all saved notes
 app.get('/api/notes', (req, res) => {
@@ -53,25 +66,6 @@ app.get('/notes', (req, res) => {
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, './public/index.html'));
 });
-
-
-// POST /api/notes - ADDS to the db.json, RETURN new note
-app.post('/api/notes', (req, res) => {
-  const { title, text } = req.body;
-  
-  const newNote = {
-    title,
-    text,
-    // give each note a unique id when saved
-    id: uuidv4()
-  }
-  
-  // send to new note function to read and add to db.json file
-  addNewNote(newNote);
-
-  // return the response for the newNote to print on page
-  res.json(notes);
-})
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

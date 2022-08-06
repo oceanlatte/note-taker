@@ -40,8 +40,9 @@ const saveNote = (note) =>
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(note),
+    // . then () if response.ok then run get notes
+    // if !response.ok then alert to know the request was not completed or something
   });
-
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
     method: 'DELETE',
