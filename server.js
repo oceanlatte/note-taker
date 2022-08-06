@@ -16,9 +16,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
 
 const findById = (id, notesArr) => {
-  const result = notesArr.filter(notesId => notesId.id === id)
-  console.log(result, "filtered notesArr?");
-  return result;
+  console.log(id, "id crosedover parameter");
+  
+  const filteredNotes = notesArr.filter(notesId => notesId.id !== id)
+  console.log(filteredNotes, "filtered notesArr");
+
+  fs.readFile('./db/db.json', 'utf8', (err, data) => {
+    if (err) {
+      console.log(err);
+      return res.sendStatus(505);
+    }
+    else {
+      // console.log(data, "data logged");
+      const newData = JSON.parse(data);
+
+      const resultArr = newData.filter(notesId => notesId.id !== id);
+      console.log(resultArr, "filtered parsed Notes");
+      
+    }
+  });
+  return filteredNotes;
 };
 
 
@@ -74,11 +91,11 @@ app.get('*', (req, res) => {
 });
 
 app.delete('/api/notes/:id', (req, res) => {
-  const returnedId = findById(req.params.id, notes);
+  const returnedArr = findById(req.params.id, notes);
 
-  console.log(returnedId, "returned ID from findByID function");
+  console.log(returnedArr, "returned obj from findByID function");
 
-  res.send(notes);
+  res.json(returnedArr);
 })
 
 app.listen(PORT, () => {
