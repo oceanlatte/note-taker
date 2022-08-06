@@ -15,6 +15,12 @@ app.use(express.urlencoded({ extended: true }));
 // express.json takes incoming POST data and parses into req.body JS obj
 app.use(express.json()); 
 
+const findById = (id, notesArr) => {
+  const result = notesArr.filter(notesId => notesId.id === id)
+  console.log(result, "filtered notesArr?");
+  return result;
+};
+
 
 // POST /api/notes - ADDS to the db.json, RETURN new note
 app.post('/api/notes', (req, res) => {
@@ -66,6 +72,14 @@ app.get('/notes', (req, res) => {
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, './public/index.html'));
 });
+
+app.delete('/api/notes/:id', (req, res) => {
+  const returnedId = findById(req.params.id, notes);
+
+  console.log(returnedId, "returned ID from findByID function");
+
+  res.send(notes);
+})
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
