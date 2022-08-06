@@ -5,7 +5,6 @@ const PORT = process.env.PORT || 3001;
 const path = require('path'); // works with file paths
 const fs = require('fs'); // write file
 const { v4: uuidv4 } = require('uuid'); // npm for unique id
-const e = require('express');
 const app = express(); // instantiate express
 
 // ---APP.USE middleware functions here ---
@@ -18,8 +17,6 @@ app.use(express.json());
 
 
 const addNewNote = newNote => {
-  console.log(newNote, "body crossed over to NEW NOTE FUNC");
-
   // read db.json to get all data already saved
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {
@@ -35,8 +32,8 @@ const addNewNote = newNote => {
       fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
         JSON.stringify(parsedNotesArr, null, 2)
-      );
-      return parsedNotesArr;
+      )
+      return;
     }
   });
 };
@@ -70,8 +67,10 @@ app.post('/api/notes', (req, res) => {
   }
   
   // send to new note function to read and add to db.json file
-  const returnedNote = addNewNote(newNote);
-  res.json(returnedNote);
+  addNewNote(newNote);
+
+  // return the response for the newNote to print on page
+  res.json(notes);
 })
 
 app.listen(PORT, () => {

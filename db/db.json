@@ -7,5 +7,15 @@
     "title": "Tester Title 2",
     "text": "tester text 2",
     "id": 1234
+  },
+  {
+    "title": "New Note",
+    "text": "res.json (note)",
+    "id": "55868cf8-d346-48d2-85b2-ee9e0bbb4338"
+  },
+  {
+    "title": "LocalHost",
+    "text": "note from host",
+    "id": "6d298e58-ed3f-4198-9768-ebcff4b2ff87"
   }
 ]
