@@ -15,11 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 // express.json takes incoming POST data and parses into req.body JS obj
 app.use(express.json()); 
 
-const findById = (id, notesArr) => {
-  console.log(id, "id crosedover parameter");
-  
-  const filteredNotes = notesArr.filter(notesId => notesId.id !== id)
-  console.log(filteredNotes, "filtered notesArr");
+const filterById = (id, notesArr) => {
+  const filteredNotes = notesArr.filter(notesId => notesId.id !== id);
 
   fs.readFile('./db/db.json', 'utf8', (err, data) => {
     if (err) {
@@ -27,19 +24,23 @@ const findById = (id, notesArr) => {
       return res.sendStatus(505);
     }
     else {
-      // console.log(data, "data logged");
       const newData = JSON.parse(data);
 
+      // filter the read data to exclude the selected id
       const resultArr = newData.filter(notesId => notesId.id !== id);
-      console.log(resultArr, "filtered parsed Notes");
-      
+
+      // write the results of filter to the db.json
+      fs.writeFileSync(
+        path.join(__dirname, './db/db.json'),
+        JSON.stringify(resultArr, null, 2)
+      )
     }
   });
   return filteredNotes;
 };
 
 
-// POST /api/notes - ADDS to the db.json, RETURN new note
+// POST /api/notes - ADDS to the db.json, RETURNS updated db.json
 app.post('/api/notes', (req, res) => {
   const { title, text } = req.body;
   
@@ -75,7 +76,7 @@ app.post('/api/notes', (req, res) => {
   res.json(notes);
 });
 
-// GET /api/notes - should READ db.json AND RETURN all saved notes
+// GET /api/notes - READS db.json AND RETURNS all saved notes
 app.get('/api/notes', (req, res) => {
   res.json(notes);
 });
@@ -91,11 +92,10 @@ app.get('*', (req, res) => {
 });
 
 app.delete('/api/notes/:id', (req, res) => {
-  const returnedArr = findById(req.params.id, notes);
+  // send request parameter id to filterById function to read & write db.json
+  const returnedArr = filterById(req.params.id, notes);
 
-  console.log(returnedArr, "returned obj from findByID function");
-
-  res.json(returnedArr);
+  res.status(200).json(returnedArr);
 })
 
 app.listen(PORT, () => {
